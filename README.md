@@ -73,3 +73,17 @@ Aplicație C++ cu interfață grafică Qt pentru gestionarea unui portofoliu de 
 
 ## 🗂️ Structura proiectului
 
+/crypto-wallet-qt/
+├── main.cpp
+├── mainwindow.ui # GUI Qt Designer (Andrei)
+├── mainwindow.cpp/h # Logica GUI (Andrei)
+├── styles.qss # Stiluri GUI (Andrei)
+├── api.cpp/h # API CoinGecko (Andrei)
+├── utils.cpp/h # Utilitare (Andrei)
+├── portofoliu.cpp/h # Clasa Portofoliu (Mario)
+├── moneda.cpp/h # Clasa Moneda (Mario)
+├── tranzactie.cpp/h # Clasa Tranzactie (Mario)
+├── export.cpp/h # Export CSV (Mario)
+├── data.cpp/h # Salvare locală (Mario, opțional)
+├── crypto_wallet.pro # Qt build file
+
