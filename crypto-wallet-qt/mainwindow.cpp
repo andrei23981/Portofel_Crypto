@@ -7,37 +7,48 @@
 #include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow){
+    : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
     ui->comboBoxMoneda->addItems({"bitcoin", "ethereum", "solana"});
     actualizeazaPret();
 }
-MainWindoW::~MainWindow(){
+
+MainWindow::~MainWindow() {
     delete ui;
 }
+
 void MainWindow::on_comboBoxMoneda_currentIndexChanged(int) {
     actualizeazaPret();
 }
-void MainWindoW::on_buttonCumpara_clicked() {
+
+void MainWindow::on_buttonCumpara_clicked() {
     QString sumaText = ui->lineEditSuma->text();
     if (!isValidSuma(sumaText)) {
         QMessageBox::warning(this, "Eroare", "Introduceți suma de cumpărat.");
         return;
     }
+
     QString simbol = ui->comboBoxMoneda->currentText();
     QString pretStr = API::getPret(simbol);
+
     if (pretStr.isEmpty()) {
         QMessageBox::warning(this, "Eroare", "Nu s-a putut obține prețul pentru moneda selectată.");
         return;
     }
 
-    QMessageBox::information(this, "Cumparare reusita", "Ai cumparat cu succes "+simbol.toUpper() + " de " + sumaText + " RON.");
+    QMessageBox::information(
+        this,
+        "Cumpărare reușită",
+        "Ai cumpărat cu succes " + simbol.toUpper() + " de " + sumaText + " RON."
+    );
 
     ui->lineEditSuma->clear();
 }
+
 void MainWindow::actualizeazaPret() {
     QString simbol = ui->comboBoxMoneda->currentText();
     QString pretStr = API::getPret(simbol);
+
     if (!pretStr.isEmpty())
         ui->labelPretCurent->setText("Preț curent: " + pretStr + " RON");
     else
