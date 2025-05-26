@@ -1,10 +1,9 @@
-#include <QApplication>
-#include "mainwindow.h"
+#include "moneda.h"
 
-// Main entry point for the crypto wallet application
-int main(int argc, char *argv[]) {
-    QApplication app(argc, argv);
-    MainWindow w;
-    w.show();
-    return app.exec();
+
+int main(){
+    moneda Bitcoin("Bitcoin", "BTC", 6700);
+    cout<<Bitcoin.afisare_nume()<<endl;
+    cout<<Bitcoin.afisare_simbol()<<endl;
+    cout<<Bitcoin.afisare_valoare();
 }
