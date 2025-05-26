@@ -15,6 +15,9 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindoW::~MainWindow(){
     delete ui;
 }
+void MainWindow::on_comboBoxMoneda_currentIndexChanged(int) {
+    actualizeazaPret();
+}
 void MainWindoW::on_buttonCumpara_clicked() {
     QString sumaText = ui->lineEditSuma->text();
     if (!isValidSuma(sumaText)) {
