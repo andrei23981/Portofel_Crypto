@@ -1,0 +1,1 @@
+// Tranzactie class header
