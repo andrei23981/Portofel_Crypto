@@ -1,1 +1,0 @@
-// CoinGecko API access implementation

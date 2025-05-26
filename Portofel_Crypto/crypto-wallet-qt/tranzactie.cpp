@@ -1,1 +1,0 @@
-// Tranzactie class implementation
