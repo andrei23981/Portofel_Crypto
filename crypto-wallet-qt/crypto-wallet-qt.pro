@@ -9,14 +9,23 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     api.cpp \
-    utils.cpp
+    utils.cpp \
+    moneda.cpp \
+    portofoliu.cpp \
+    tranzactie.cpp
 
 HEADERS += \
     mainwindow.h \
     api.h \
-    utils.h
+    utils.h \
+    moneda.h \
+    portofoliu.h \
+    tranzactie.h
 
 FORMS += \
     mainwindow.ui
 
-# Pentru fișiere suplimentare, adaugă-le aici
+RESOURCES +=
+
+# Dacă folosești fișiere de stil:
+# include styles.qss dacă îl folosești din cod, nu aici
