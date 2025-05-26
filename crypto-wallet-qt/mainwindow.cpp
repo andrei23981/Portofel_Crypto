@@ -36,11 +36,13 @@ void MainWindow::on_buttonCumpara_clicked() {
         return;
     }
 
-    QMessageBox::information(
-        this,
-        "Cumpărare reușită",
-        "Ai cumpărat cu succes " + simbol.toUpper() + " de " + sumaText + " RON."
-    );
+    double sumaRON = sumaText.toDouble();
+    double pret = pretStr.toDouble();
+    double cantitate = sumaRON / pret;
+
+    portofoliu.adaugaMoneda(simbol, cantitate);
+
+    QMessageBox::information(this,"Cumpărare reușită","Ai cumpărat cu succes " + simbol.toUpper() + " de " + sumaText + " RON.");
 
     ui->lineEditSuma->clear();
 }

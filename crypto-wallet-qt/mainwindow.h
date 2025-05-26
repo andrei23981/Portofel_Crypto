@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "portofoliu.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -21,6 +22,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     void actualizeazaPret();
+    Portofoliu portofoliu; // Instance of Portofoliu to manage wallet operations
 };
 
 #endif // MAINWINDOW_H
