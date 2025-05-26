@@ -1,2 +1,11 @@
 // CoinGecko API access header
-#ifndef COINGECKO_API_H
+#ifndef API_H
+#define API_H
+#include <QString>
+
+class Api{
+public:
+    static QString getPret(const QString&);
+};
+
+#endif // API_H
