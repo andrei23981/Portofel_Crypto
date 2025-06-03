@@ -115,6 +115,7 @@ $ ./app2 vizualizare_portofel
 $ ./app2 vizualizare_tranzactii
 $ ./app2 export
 ```
+```RULARE:  g++ app2.cpp Moneda.cpp Tranzactie.cpp Api.cpp Portofoliu.cpp -o app2.exe```
 
 ### Format `portofel.txt`
 
