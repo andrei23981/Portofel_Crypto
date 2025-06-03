@@ -70,6 +70,7 @@ $ ./app1 stergere ETH
 $ ./app1 vizualizare
 $ ./app1 export
 ```
+RULARE: g++ app1.cpp Moneda.cpp Api.cpp -o app1.exe -lcurl -ljsoncpp
 
 ### Format `monede.txt`
 
