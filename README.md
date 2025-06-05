@@ -1,6 +1,6 @@
-# Proiect C++: Crypto Wallet CLI
+# Proiect C++: Crypto Wallet
 
-Acest proiect C++ constă în două aplicații separate care simulează un portofel de criptomonede. Nu există interacțiune directă cu utilizatorul prin tastatură; toate comenzile sunt date exclusiv prin linia de comandă. Datele sunt stocate local, folosind fișiere text sau CSV. Codul este simplu, modular, scris cu `using namespace std`.
+Acest proiect C++ constă în două aplicații separate care simulează un portofel de criptomonede. Nu există interacțiune directă cu utilizatorul prin tastatură; toate comenzile sunt date exclusiv prin linia de comandă. Datele sunt stocate local, folosind fișiere text sau CSV.
 
 ---
 
@@ -8,28 +8,49 @@ Acest proiect C++ constă în două aplicații separate care simulează un porto
 
 ```
 /CryptoWallet/
-├── app1.cpp                // aplicația pentru Student 1 (gestiune monede)
-├── app2.cpp                // aplicația pentru Student 2 (portofel & tranzacții)
-├── monede.txt              // simboluri de monede permise
-├── monede_live.csv         // export CSV cu prețuri curente
-├── portofel.txt            // conține simbol + cantitate
-├── tranzactii.txt          // istoric tranzacții
-├── portofel.csv            // export portofel CSV
-├── Makefile / CMakeLists.txt (opțional)
+├── shared/                 # Cod și resurse comune între aplicații
+│   ├── classes/            # Clasele C++ organizate pe fișiere
+│   │   ├── Moneda.cpp      # Implementare clasa Moneda
+│   │   ├── Moneda.h        # Declarație clasa Moneda
+│   │   ├── Api.cpp         # Implementare clasa Api (interfață spre API real CoinGecko)
+│   │   ├── Api.h           # Declarație clasa Api
+│   │   ├── Tranzactie.cpp  # Implementare clasa Tranzactie
+│   │   ├── Tranzactie.h    # Declarație clasa Tranzactie
+│   │   ├── Portofoliu.cpp  # Implementare clasa Portofoliu
+│   │   ├── Portofoliu.h    # Declarație clasa Portofoliu
+│   │   ├── Utils.cpp / Utils.h         # Funcții auxiliare (ex: creare Market)
+│   ├── files/              # Fișiere de date partajate (monede, portofel, tranzacții)
+│       ├── monede.txt          # Lista monede permise
+│       ├── monede_live.csv     # Export prețuri monede live (CSV)
+│       ├── portofel.txt        # Portofel - simboluri și cantități
+│       ├── tranzactii.txt      # Istoric tranzacții
+│       ├── portofel.csv        # Export portofel CSV
+│       ├── fonduri.txt         # Fonduri disponibile
+├── app1.cpp                # Executabil 1 - gestiune monede (folosește Moneda, Api)
+├── app2.cpp                # Executabil 2 - portofel & tranzacții (folosește Tranzactie, Portofoliu, Moneda, Api)
+├── README.md               # Documentația generală a proiectului
+
 ```
 
 ---
 
 ## 🧱 Clase principale
 
-### Moneda
+### Market (abstractă)
+* Clasă de bază pentru orice activ tranzacționabil (criptomonede sau materiale)
+
+### Moneda și Material
 
 * Reprezintă o criptomonedă prin simbol (ex: BTC, ETH)
 
-### Api (simulat)
+### Api (live)
 
-* Metodă statică `getPrice(simbol)`
-* Generează un preț determinist pentru fiecare simbol (fără cereri HTTP)
+* Clasa Api oferă metode statice pentru obținerea prețurilor
+* getPriceFromApi(simbol, fiat = "ron") – prețul unei monede cripto
+* getMetalPrice(simbol) – prețul unui metal prețios
+* Trimite cerere HTTP reală către CoinGecko API
+* Parsează răspunsul JSON pentru a obține prețul curent în RON
+* Necesită: `libcurl` și `jsoncpp`
 
 ### Tranzactie
 
@@ -37,55 +58,78 @@ Acest proiect C++ constă în două aplicații separate care simulează un porto
 
 ### Portofoliu
 
-* Metode statice pentru:
+* Gestionarea activelor, fondurilor disponibile și istoricul tranzacțiilor
+* Include stocare în fișiere și export CSV
 
-  * încărcare/salvare din fișiere
-  * vizualizare portofel & export CSV
-  * salvare tranzacții
-
+### Utils
+* Funcția createMarketFromSimbol() pentru a distinge între monedă și material
+* Functia template generică load_items<T> care încarcă elemente de tipul T dintr-un fișier text într-un vector
 ---
 
-## 🧑‍💼 Aplicația 1: Gestiune monede (`app1.cpp`)
+## 🧑‍💼 Aplicația 1: Gestiune monede & materiale (`app1.cpp`)
 
 ### Comenzi linie de comandă:
 
-* `./app1 adaugare <simbol>`
+#### 🔸 Pentru monede:
 
-  * Adaugă un simbol de monedă în `monede.txt`
-* `./app1 stergere <simbol>`
+* `./app1 adaugare_moneda <simbol>`  
+  * Adaugă un simbol de criptomonedă în `monede.txt`
 
-  * Șterge simbolul din `monede.txt`
-* `./app1 vizualizare`
+* `./app1 stergere_moneda <simbol>` 
+  * Șterge simbolul criptomonedei din `monede.txt`
 
-  * Afișează toate monedele + prețuri simulate
-* `./app1 export`
+#### 🔸 Pentru materiale:
 
-  * Exportă lista în `monede_live.csv`
+* `./app1 adaugare_material <simbol>`  
+  * Adaugă un material prețios (ex: aur, argint) în `monede.txt`
+
+* `./app1 stergere_material <simbol>`  
+  * Șterge materialul din `monede.txt`
+
+#### 🔸 Alte comenzi:
+
+* `./app1 init`  
+  * Reseteaza lista de monede si materiale
+
+* `./app1 vizualizare`  
+  * Afișează toate monedele și materialele + prețurile actuale (live)
+
+* `./app1 export`  
+  * Exportă lista activelor în `monede_live.csv`
 
 ### Exemple:
 
 ```
-$ ./app1 adaugare BTC
-$ ./app1 stergere ETH
+$ ./app1 init
+$ ./app1 adaugare_moneda bitcoin
+$ ./app1 adaugare_material aur
+$ ./app1 stergere_material argint
 $ ./app1 vizualizare
 $ ./app1 export
 ```
-```RULARE:   g++ app1.cpp Moneda.cpp Api.cpp -o app1.exe -lcurl -ljsoncpp```
+```RULARE:   g++ -std=c++17 app1.cpp shared/classes/Moneda.cpp shared/classes/Api.cpp shared/classes/Market.cpp shared/classes/Materiale.cpp -o app1.exe -lcurl -ljsoncpp```
 
 ### Format `monede.txt`
 
 ```
-BTC
-ETH
-ADA
+bitcoin
+ethereum
+cardano
+binancecoin
+ripple
+solana
+polkadot
+litecoin
 ```
 
 ### Format `monede_live.csv`
 
 ```
 Simbol,PretRON
-BTC,21800
-ETH,22600
+bitcoin,21800
+ethereum,22600
+aur,300
+
 ```
 
 ---
@@ -106,60 +150,64 @@ ETH,22600
 * `./app2 export`
 
   * Exportă portofelul în `portofel.csv`
+* `./app2 init <suma>`
 
+  * Reteaza portofelul si tranzactiile si fondurile cu suma initiata
 ### Exemple:
 
 ```
-$ ./app2 cumparare BTC 1000
+$ ./app2 init 10000
+$ ./app2 cumparare bitcoin 1500
+$ ./app2 cumparare aur 700
 $ ./app2 vizualizare_portofel
 $ ./app2 vizualizare_tranzactii
 $ ./app2 export
 ```
-```RULARE: g++ app2.cpp Tranzactie.cpp Portofoliu.cpp ../App1/Moneda.cpp ../App1/Api.cpp -o app2.exe -lcurl -ljsoncpp```
+```RULARE: g++ app2.cpp shared/classes/Tranzactie.cpp shared/classes/Portofoliu.cpp shared/classes/Moneda.cpp shared/classes/Api.cpp shared/classes/Market.cpp shared/classes/Materiale.cpp shared/classes/Utils.cpp -o app2.exe -lcurl -ljsoncpp```
+
+### Format `materiale.txt`
+
+```
+aur
+argint
+cupru
+uraniu
+fier
+```
 
 ### Format `portofel.txt`
 
 ```
-BTC 0.045
-ETH 1.23
+bitcoin 0.045
+ethereum 1.23
 ```
 
 ### Format `tranzactii.txt`
 
 ```
-BTC 0.045 22000
-ETH 1.23 7200
+bitcoin 0.045 22000
+ethereum 1.23 7200
 ```
 
 ### Format `portofel.csv`
 
 ```
 Simbol,Cantitate,PretCurentRON,ValoareRON
-BTC,0.045,22000,990
-ETH,1.23,7200,8856
+bitcoin,0.045,22000,990
+ethereum,1.23,7200,8856
 ```
 
 ---
 
 ## ✅ Observații
 
-* Nu se folosește `std::`, se utilizează `using namespace std`
-* Prețurile sunt simulate, dar codul poate fi adaptat pentru a folosi CoinGecko API
-* Fiecare fișier este simplu și ușor de verificat cu `cat` sau un editor
-* Nu este permisă citirea de la tastatură (`cin`)
+* Prețurile sunt live (CoinGecko), cereri HTTP prin libcurl, JSON parsing prin jsoncpp
 
 ---
 
-## 🔧 Posibilități de extindere
-
-* Integrarea efectivă cu API CoinGecko prin libcurl
-* Adăugarea unui istoric al valorii portofoliului
-* Vânzare monedă / simulare pierderi / profit
-* Interfață grafică cu Qt sau o versiune Web cu C++ backend
-
 ---
 
-Proiect dezvoltat de: **Andrei & Mario**
+Proiect dezvoltat de: **Andrei Chindriș & Mario Bălan**
 
 Facultatea: **Informatică**
-Limbaj: **C++ Standard (C++11 sau mai nou)**
+Limbaj: **C++ Standard**
